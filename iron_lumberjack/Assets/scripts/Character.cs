@@ -37,6 +37,7 @@ public class Character : NetworkBehaviour {
 		transform.GetChild(1).GetComponent<MeshRenderer> ().material = clonedMaterial;
 
 		characters.Add (this);
+		Spawn ();
 	}
 
 	float lastLogTime = 0;
@@ -110,8 +111,12 @@ public class Character : NetworkBehaviour {
 	}
 
 	void Die() {
-		GameObject respawnPoint = GameObject.FindGameObjectWithTag ("Respawn");
-		transform.position = respawnPoint.transform.position;
+		Spawn ();
+	}
+
+	void Spawn() {
+		GameObject[] respawnPoints = GameObject.FindGameObjectsWithTag ("Respawn");
+		transform.position = respawnPoints[Random.Range(0, respawnPoints.Length)].transform.position;
 	}
 
 	void Hit(int damage) {

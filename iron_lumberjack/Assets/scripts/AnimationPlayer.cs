@@ -2,13 +2,12 @@
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class AnimationPlayer : NetworkBehaviour
+public class AnimationPlayer : MonoBehaviour
 {
 	Texture[] frames;
 	Material material;
 	bool playingAnimation = false;
 
-	[SyncVar]
 	int currentFrameIndex = -1;
 
 	float lastFrameChangeTime = 0;
