@@ -2,21 +2,37 @@
 using System.Collections;
 using UnityEngine.Networking;
 
-public class Character : NetworkBehaviour {
+public class Character : NetworkBehaviour, IPowerUpable {
 //	public int curTextureIndex = 0;
 //	public float lastTextureChangeTime = 0;
 //	public float changeTextureFreq = 24;
 	public Material characterMaterial;
-//	public Texture[] textures;
-	public float speed;
-	public int health;
+    //	public Texture[] textures;
+    private float speed;
+    public int health;
 	public string attackAnimationDir;
 	private Texture[] attackAnimationTextures;
+    System.Collections.Generic.Dictionary<PowerUpType, IPowerUp> powerUps =  new System.Collections.Generic.Dictionary<PowerUpType, IPowerUp>();
 
 	private bool inAttackingState = false;
 
-	// Use this for initialization
-	void Start () {
+    public float Speed
+    {
+        get
+        {
+            if (IsAffectedByPowerUp(PowerUpType.Haste))
+                return speed * 1.5f;
+            return speed;
+        }
+
+        set
+        {
+            speed = value;
+        }
+    }
+
+    // Use this for initialization
+    void Start () {
 		Object[] texturesAsObj = Resources.LoadAll (attackAnimationDir);
 		Debug.Log ("texturesAsObj size: " + texturesAsObj.GetLength (0));
 		attackAnimationTextures = new Texture[texturesAsObj.GetLength(0)];
@@ -25,8 +41,7 @@ public class Character : NetworkBehaviour {
 		}
 		Spawn ();
 	}
-	
-	// Update is called once per frame
+
 	void FixedUpdate () {
 		if (!isLocalPlayer) {
 			return;
@@ -50,7 +65,7 @@ public class Character : NetworkBehaviour {
 	}
 
 	void SetVelocity(Vector2 v2d) {
-		GetComponent<Rigidbody>().velocity = new Vector3 (v2d.x, 0, v2d.y) * speed * Time.deltaTime;
+		GetComponent<Rigidbody>().velocity = new Vector3 (v2d.x, 0, v2d.y) * Speed * Time.deltaTime;
 	}
 //
 //	void SetTexture(Texture texture) {
@@ -126,4 +141,47 @@ public class Character : NetworkBehaviour {
 			})
 		);
 	}
+
+    public void ApplyPowerup(PowerUpType powerUpType)
+    {
+        if (!powerUps.ContainsKey(powerUpType))
+            powerUps.Add(powerUpType, PowerUpFactory.CreatePowerUp(powerUpType));
+        else
+            powerUps[powerUpType].PowerUpStartTime = Time.time;
+    }
+
+    public bool IsAffectedByPowerUp(PowerUpType powerUpType)
+    {
+        if (!powerUps.ContainsKey(powerUpType))
+            return false;
+        else
+        {
+            var powerUp = powerUps[powerUpType];
+            if (powerUp.PowerUpDuration > Time.time - powerUp.PowerUpStartTime)
+                return true;
+            else
+            {
+                powerUps.Remove(powerUpType);
+                return false;
+            }
+        }
+    }
+
+    public float GetPowerUpRemainingTime(PowerUpType powerUpType)
+    {
+        if (!powerUps.ContainsKey(powerUpType))
+            return 0;
+        else
+        {
+            var powerUp = powerUps[powerUpType];
+            var remainingTime = Time.time - powerUp.PowerUpStartTime;
+            if (remainingTime < powerUp.PowerUpDuration)
+                return remainingTime;
+            else
+            {
+                powerUps.Remove(powerUpType);
+                return 0;
+            }
+        }
+    }
 }
