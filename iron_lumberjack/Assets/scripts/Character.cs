@@ -45,7 +45,7 @@ public class Character : NetworkBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 		if (Time.time - lastLogTime > 5) {
-			DebugConsole.Log ("Character netId: " + netId + " coords: " + transform.position + " mat: " + characterMaterial.GetInstanceID());
+			DebugConsole.Log ("Character netId: " + netId + " coords: " + transform.position + " mat: " + characterMaterial.GetInstanceID() + " health: " + health);
 			lastLogTime = Time.time;
 		}
 
@@ -132,7 +132,7 @@ public class Character : NetworkBehaviour {
 			Die();
 		}
 
-		if (other.tag.Equals("Weapon")) {
+		if (other.tag.Equals("Weapon") && other.GetComponentInParent<Character>().inAttackingState) {
 			Hit (other.GetComponent<IWeapon> ().GetDamage ());
 		}
 	}
