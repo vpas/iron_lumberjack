@@ -32,7 +32,7 @@ public class MusicController : MonoBehaviour {
 	}
 
 	public void playDeathSound() {
-		deathAudioSource.clip = deathSounds[Random.Range(0, deathSounds.Length)] as AudioClip;
-		deathAudioSource.Play();
+		deathAudioSource.clip = deathSounds [Random.Range (0, deathSounds.Length)] as AudioClip;
+		deathAudioSource.Play ();
 	}
 }
