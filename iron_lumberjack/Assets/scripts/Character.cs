@@ -3,12 +3,13 @@ using System.Collections;
 using UnityEngine.Networking;
 
 public class Character : NetworkBehaviour {
-	public int curTextureIndex = 0;
-	public float lastTextureChangeTime = 0;
-	public float changeTextureFreq = 24;
+//	public int curTextureIndex = 0;
+//	public float lastTextureChangeTime = 0;
+//	public float changeTextureFreq = 24;
+//	public Material characterMaterial;
+//	public Texture[] textures;
 	public float speed;
-	public Material characterMaterial;
-	public Texture[] textures;
+	public int health;
 
 	// Use this for initialization
 	void Start () {
@@ -41,11 +42,11 @@ public class Character : NetworkBehaviour {
 	void SetVelocity(Vector2 v2d) {
 		GetComponent<Rigidbody>().velocity = new Vector3 (v2d.x, 0, v2d.y) * speed * Time.deltaTime;
 	}
-
-	void SetTexture(Texture texture) {
-		characterMaterial.SetTexture ("_MainTex", texture);
-		characterMaterial.SetTexture ("_BumpMap", texture);
-	}
+//
+//	void SetTexture(Texture texture) {
+//		characterMaterial.SetTexture ("_MainTex", texture);
+//		characterMaterial.SetTexture ("_BumpMap", texture);
+//	}
 
 	void Update() {
 		if (!isLocalPlayer) {
@@ -77,10 +78,21 @@ public class Character : NetworkBehaviour {
 		transform.position = respawnPoint.transform.position;
 	}
 
+	void Hit(int damage) {
+		health -= damage;
+		if (health <= 0) {
+			Die ();
+		}
+	}
+
 	void OnTriggerEnter(Collider other) {
 		Debug.Log ("OnTriggerEnter: tag: " + other.tag);
 		if (other.tag.Equals("Spikes")) {
 			Die();
+		}
+
+		if (other.tag.Equals("Weapon")) {
+			Hit (other.GetComponent<IWeapon> ().GetDamage ());
 		}
 	}
 
