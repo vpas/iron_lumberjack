@@ -35,6 +35,7 @@ public class Character : NetworkBehaviour {
 			v2d += Vector2.right;
 		}
 		SetVelocity (v2d);
+		transform.position = new Vector3 (transform.position.x, 0.5f, transform.position.z);
 	}
 
 	void SetVelocity(Vector2 v2d) {
@@ -69,6 +70,18 @@ public class Character : NetworkBehaviour {
 //			curTextureIndex = (curTextureIndex + 1) % textures.GetLength(0);
 //			lastTextureChangeTime = Time.time;
 //		}
+	}
+
+	void Die() {
+		GameObject respawnPoint = GameObject.FindGameObjectWithTag ("Respawn");
+		transform.position = respawnPoint.transform.position;
+	}
+
+	void OnTriggerEnter(Collider other) {
+		Debug.Log ("OnTriggerEnter: tag: " + other.tag);
+		if (other.tag.Equals("Spikes")) {
+			Die();
+		}
 	}
 
 }
