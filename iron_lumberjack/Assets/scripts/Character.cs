@@ -6,14 +6,23 @@ public class Character : NetworkBehaviour {
 //	public int curTextureIndex = 0;
 //	public float lastTextureChangeTime = 0;
 //	public float changeTextureFreq = 24;
-//	public Material characterMaterial;
+	public Material characterMaterial;
 //	public Texture[] textures;
 	public float speed;
 	public int health;
+	public string attackAnimationDir;
+	private Texture[] attackAnimationTextures;
+
+	private bool inAttackingState = false;
 
 	// Use this for initialization
 	void Start () {
-	
+		Object[] texturesAsObj = Resources.LoadAll (attackAnimationDir);
+		Debug.Log ("texturesAsObj size: " + texturesAsObj.GetLength (0));
+		attackAnimationTextures = new Texture[texturesAsObj.GetLength(0)];
+		for (int i = 0; i < texturesAsObj.GetLength(0); i++) {
+			attackAnimationTextures [i] = (Texture)texturesAsObj [i];
+		}
 	}
 	
 	// Update is called once per frame
@@ -57,7 +66,7 @@ public class Character : NetworkBehaviour {
 		mousePosition.z = 10.0f;
 		var mousePositionWorldCoords = Camera.main.ScreenToWorldPoint (mousePosition);
 		mousePositionWorldCoords.y = transform.position.y;
-		var characterDirection = -(transform.position - mousePositionWorldCoords);
+		var characterDirection = transform.position - mousePositionWorldCoords;
 		transform.rotation = Quaternion.LookRotation(characterDirection);
 
 		Camera.main.transform.position = new Vector3(
@@ -65,6 +74,11 @@ public class Character : NetworkBehaviour {
 			Camera.main.transform.position.y,
 			transform.position.z
 		);
+
+		if (Input.GetMouseButtonDown (0) && !inAttackingState) {
+			AttackWithWeapon ();
+		}
+			
 //
 //		if (Time.time - lastTextureChangeTime > 1.0 / changeTextureFreq) {
 //			SetTexture (textures [curTextureIndex]);
@@ -96,4 +110,15 @@ public class Character : NetworkBehaviour {
 		}
 	}
 
+	void AttackWithWeapon() {
+		inAttackingState = true;
+		GetComponent<AnimationPlayer> ().StartAnimation (
+			attackAnimationTextures,
+			characterMaterial,
+			0.5f,
+			new System.Action (delegate {
+				inAttackingState = false;
+			})
+		);
+	}
 }

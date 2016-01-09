@@ -1,16 +1,6 @@
 fileFormatVersion: 2
-<<<<<<< HEAD
-<<<<<<< HEAD
-guid: 8e93a7e0789e7694ca0dd80f66a21e97
-timeCreated: 1452361090
-=======
-guid: 7df696077b95d464ab5c19ff5f8da99b
-timeCreated: 1452359390
->>>>>>> a03051499ff74b58eb37d73a8a1192979c27a1ba
-=======
-guid: ff313d56d15c34960b01a1866564b9d6
-timeCreated: 1452360625
->>>>>>> Enable girl attack animation
+guid: 1441a3cd49f3c497dab69179728e787f
+timeCreated: 1452360622
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName: {}
@@ -27,29 +17,13 @@ TextureImporter:
   bumpmap:
     convertToNormalMap: 0
     externalNormalMap: 0
-<<<<<<< HEAD
-<<<<<<< HEAD
-    heightScale: .25
-=======
     heightScale: 0.25
->>>>>>> a03051499ff74b58eb37d73a8a1192979c27a1ba
-=======
-    heightScale: 0.25
->>>>>>> Enable girl attack animation
     normalMapFilter: 0
   isReadable: 0
   grayScaleToAlpha: 0
   generateCubemap: 0
   cubemapConvolution: 0
-<<<<<<< HEAD
-<<<<<<< HEAD
-  cubemapConvolutionSteps: 8
-=======
   cubemapConvolutionSteps: 7
->>>>>>> a03051499ff74b58eb37d73a8a1192979c27a1ba
-=======
-  cubemapConvolutionSteps: 7
->>>>>>> Enable girl attack animation
   cubemapConvolutionExponent: 1.5
   seamlessCubemap: 0
   textureFormat: -1
@@ -68,15 +42,7 @@ TextureImporter:
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
-<<<<<<< HEAD
-<<<<<<< HEAD
-  spritePivot: {x: .5, y: .5}
-=======
   spritePivot: {x: 0.5, y: 0.5}
->>>>>>> a03051499ff74b58eb37d73a8a1192979c27a1ba
-=======
-  spritePivot: {x: 0.5, y: 0.5}
->>>>>>> Enable girl attack animation
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spritePixelsToUnits: 100
   alphaIsTransparency: 0
@@ -84,14 +50,7 @@ TextureImporter:
   buildTargetSettings: []
   spriteSheet:
     sprites: []
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
     outline: []
->>>>>>> a03051499ff74b58eb37d73a8a1192979c27a1ba
-=======
-    outline: []
->>>>>>> Enable girl attack animation
   spritePackingTag: 
   userData: 
   assetBundleName: 
