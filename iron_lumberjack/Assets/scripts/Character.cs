@@ -3,17 +3,24 @@ using System.Collections;
 using UnityEngine.Networking;
 
 public class Character : NetworkBehaviour {
+	private static ArrayList characters = new ArrayList();
 //	public int curTextureIndex = 0;
 //	public float lastTextureChangeTime = 0;
 //	public float changeTextureFreq = 24;
-	public Material characterMaterial;
+	public Texture idleTexture;
+
 //	public Texture[] textures;
 	public float speed;
 	public int health;
 	public string attackAnimationDir;
+
+	public Material characterMaterial;
 	private Texture[] attackAnimationTextures;
 
 	private bool inAttackingState = false;
+
+	[SyncVar]
+	private int playerId;
 
 	// Use this for initialization
 	void Start () {
@@ -23,11 +30,24 @@ public class Character : NetworkBehaviour {
 		for (int i = 0; i < texturesAsObj.GetLength(0); i++) {
 			attackAnimationTextures [i] = (Texture)texturesAsObj [i];
 		}
-		Spawn ();
+
+		var clonedMaterial = new Material (Shader.Find("Standard"));
+		clonedMaterial.CopyPropertiesFromMaterial (characterMaterial);
+		characterMaterial = clonedMaterial;
+		transform.GetChild(1).GetComponent<MeshRenderer> ().material = clonedMaterial;
+
+		characters.Add (this);
 	}
-	
+
+	float lastLogTime = 0;
+
 	// Update is called once per frame
 	void FixedUpdate () {
+		if (Time.time - lastLogTime > 5) {
+			DebugConsole.Log ("Character netId: " + netId + " coords: " + transform.position + " mat: " + characterMaterial.GetInstanceID());
+			lastLogTime = Time.time;
+		}
+
 		if (!isLocalPlayer) {
 			return;
 		}
@@ -77,7 +97,8 @@ public class Character : NetworkBehaviour {
 		);
 
 		if (Input.GetMouseButtonDown (0) && !inAttackingState) {
-			AttackWithWeapon ();
+			Debug.Log ("Calling CmdAttackWithWeapon");
+			CmdAttackWithWeapon (this.netId);
 		}
 			
 //
@@ -89,10 +110,6 @@ public class Character : NetworkBehaviour {
 	}
 
 	void Die() {
-		Spawn ();
-	}
-
-	void Spawn() {
 		GameObject respawnPoint = GameObject.FindGameObjectWithTag ("Respawn");
 		transform.position = respawnPoint.transform.position;
 	}
@@ -115,7 +132,29 @@ public class Character : NetworkBehaviour {
 		}
 	}
 
+	[Command]
+	void CmdAttackWithWeapon(NetworkInstanceId netId) {
+		Debug.Log ("CmdAttackWithWeapon netId: " + netId);
+		foreach (Character character in characters) {
+			if (character.netId.Equals(netId)) {
+				character.AttackWithWeapon ();
+			}
+		}
+		RpcAttackWithWeapon (netId);
+	}
+
+	[ClientRpc]
+	void RpcAttackWithWeapon(NetworkInstanceId netId) {
+		Debug.Log ("RpcAttackWithWeapon netId: " + netId);
+		foreach (Character character in characters) {
+			if (character.netId.Equals(netId)) {
+				character.AttackWithWeapon ();
+			}
+		}
+	}
+
 	void AttackWithWeapon() {
+		Debug.Log ("AttackWithWeapon netId: " + netId);
 		inAttackingState = true;
 		GetComponent<AnimationPlayer> ().StartAnimation (
 			attackAnimationTextures,

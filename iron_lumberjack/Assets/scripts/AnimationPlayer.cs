@@ -7,7 +7,10 @@ public class AnimationPlayer : NetworkBehaviour
 	Texture[] frames;
 	Material material;
 	bool playingAnimation = false;
+
+	[SyncVar]
 	int currentFrameIndex = -1;
+
 	float lastFrameChangeTime = 0;
 	Action onFinish;
 	float secPerFrame;
