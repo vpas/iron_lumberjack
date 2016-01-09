@@ -6,14 +6,11 @@ public class Character : NetworkBehaviour {
 //	public int curTextureIndex = 0;
 //	public float lastTextureChangeTime = 0;
 //	public float changeTextureFreq = 24;
-	public Texture idleTexture;
-
+	public Material characterMaterial;
 //	public Texture[] textures;
 	public float speed;
 	public int health;
 	public string attackAnimationDir;
-
-	public Material characterMaterial;
 	private Texture[] attackAnimationTextures;
 
 	private bool inAttackingState = false;
@@ -26,11 +23,7 @@ public class Character : NetworkBehaviour {
 		for (int i = 0; i < texturesAsObj.GetLength(0); i++) {
 			attackAnimationTextures [i] = (Texture)texturesAsObj [i];
 		}
-
-		var clonedMaterial = new Material (Shader.Find("Standard"));
-		clonedMaterial.CopyPropertiesFromMaterial (characterMaterial);
-		characterMaterial = clonedMaterial;
-		GameObject.Find ("character_plane").GetComponent<MeshRenderer> ().material = clonedMaterial;
+		Spawn ();
 	}
 	
 	// Update is called once per frame
@@ -84,8 +77,7 @@ public class Character : NetworkBehaviour {
 		);
 
 		if (Input.GetMouseButtonDown (0) && !inAttackingState) {
-			Debug.Log ("Calling CmdAttackWithWeapon");
-			CmdAttackWithWeapon ();
+			AttackWithWeapon ();
 		}
 			
 //
@@ -97,6 +89,10 @@ public class Character : NetworkBehaviour {
 	}
 
 	void Die() {
+		Spawn ();
+	}
+
+	void Spawn() {
 		GameObject respawnPoint = GameObject.FindGameObjectWithTag ("Respawn");
 		transform.position = respawnPoint.transform.position;
 	}
@@ -119,9 +115,7 @@ public class Character : NetworkBehaviour {
 		}
 	}
 
-	[Command]
-	void CmdAttackWithWeapon() {
-		Debug.Log ("CmdAttackWithWeapon");
+	void AttackWithWeapon() {
 		inAttackingState = true;
 		GetComponent<AnimationPlayer> ().StartAnimation (
 			attackAnimationTextures,
