@@ -14,22 +14,33 @@ public class AnimationPlayer : MonoBehaviour
 	Action onFinish;
 	float secPerFrame;
 	Texture oldTexture;
+	bool loop;
 
 	public AnimationPlayer ()
 	{
 		
 	}
 
-	public void StartAnimation(Texture[] frames, Material material, float durationSec, Action onFinish) {
+	public void StartAnimation(Texture[] frames, Material material, float durationSec, Action onFinish, float secPerFrame, bool loop) {
 		Debug.Log ("StartAnimation");
 		this.frames = frames;
 		this.material = material;
-		this.secPerFrame = durationSec / frames.GetLength (0);
+		if (secPerFrame < 0) {
+			this.secPerFrame = durationSec / frames.GetLength (0);
+		} else {
+			this.secPerFrame = secPerFrame;
+		}
+		this.loop = loop;
 		this.oldTexture = material.GetTexture("_MainTex");
 		playingAnimation = true;
 		currentFrameIndex = -1;
 		lastFrameChangeTime = 0;
 		this.onFinish = onFinish;
+	}
+
+	public void StopAnimation() {
+		loop = false;
+		currentFrameIndex = frames.GetLength (0);
 	}
 
 	void Update() {
@@ -41,9 +52,13 @@ public class AnimationPlayer : MonoBehaviour
 			currentFrameIndex++;
 			Debug.Log ("currentFrameIndex: " + currentFrameIndex);
 			if (currentFrameIndex >= frames.GetLength (0)) {
-				playingAnimation = false;
-				material.SetTexture ("_MainTex", oldTexture);
-				onFinish ();
+				if (loop) {
+					currentFrameIndex = 0;
+				} else {
+					playingAnimation = false;
+					material.SetTexture ("_MainTex", oldTexture);
+					onFinish ();
+				}
 			} else {
 				material.SetTexture ("_MainTex", frames [currentFrameIndex]);
 				lastFrameChangeTime = Time.time;
@@ -51,4 +66,5 @@ public class AnimationPlayer : MonoBehaviour
 		}
 
 	}
+		
 }
