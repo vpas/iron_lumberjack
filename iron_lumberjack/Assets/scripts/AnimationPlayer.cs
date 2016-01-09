@@ -1,7 +1,8 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class AnimationPlayer : MonoBehaviour
+public class AnimationPlayer : NetworkBehaviour
 {
 	Texture[] frames;
 	Material material;
